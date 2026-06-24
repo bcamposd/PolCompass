@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionario Avanzado de Compás Político</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --card: #fffaf2;
+      --ink: #24201b;
+      --muted: #6d6257;
+      --line: #d8cdbc;
+      --accent: #7d4f2a;
+      --accent-2: #b78653;
+      --left: #b03a2e;
+      --right: #2e6eb0;
+      --auth: #6f3aa8;
+      --lib: #1f8a70;
+      --ok: #2f7d4f;
+      --warn: #a66a00;
+      --shadow: 0 16px 38px rgba(36, 32, 27, .12);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(183,134,83,.25), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(46,110,176,.16), transparent 34%),
+        var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    header {
+      padding: 42px 20px 22px;
+      text-align: center;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto 60px;
+    }
+
+    .hero {
+      background: rgba(255, 250, 242, .88);
+      border: 1px solid rgba(216, 205, 188, .8);
+      border-radius: calc(var(--radius) + 10px);
+      box-shadow: var(--shadow);
+      padding: 34px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: rgba(125, 79, 42, .08);
+      right: -80px;
+      top: -80px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 4.2rem);
+      letter-spacing: -0.06em;
+      line-height: .96;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(1.45rem, 2vw, 2rem);
+      letter-spacing: -0.035em;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 920px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 10px 22px rgba(36, 32, 27, .06);
+    }
+
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: rgba(255,255,255,.5);
+      color: var(--muted);
+      font-size: .88rem;
+      margin: 4px 4px 4px 0;
+    }
+
+    .section { margin-top: 22px; }
+
+    .model-map {
+      min-height: 420px;
+      background:
+        linear-gradient(to right, rgba(176,58,46,.12), transparent 45%, transparent 55%, rgba(46,110,176,.12)),
+        linear-gradient(to bottom, rgba(111,58,168,.14), transparent 45%, transparent 55%, rgba(31,138,112,.14));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .axis-x, .axis-y {
+      position: absolute;
+      background: rgba(36,32,27,.28);
+    }
+    .axis-x { height: 2px; left: 4%; right: 4%; top: 50%; }
+    .axis-y { width: 2px; top: 4%; bottom: 4%; left: 50%; }
+
+    .axis-label {
+      position: absolute;
+      font-weight: 800;
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(36,32,27,.72);
+      background: rgba(255,250,242,.72);
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(216,205,188,.75);
+    }
+    .left-label { left: 14px; top: calc(50% - 15px); color: var(--left); }
+    .right-label { right: 14px; top: calc(50% - 15px); color: var(--right); }
+    .auth-label { top: 14px; left: calc(50% - 55px); color: var(--auth); }
+    .lib-label { bottom: 14px; left: calc(50% - 48px); color: var(--lib); }
+
+    .quad {
+      position: absolute;
+      width: 45%;
+      font-size: .92rem;
+      color: rgba(36,32,27,.72);
+    }
+    .q1 { top: 54px; left: 30px; }
+    .q2 { top: 54px; right: 30px; text-align: right; }
+    .q3 { bottom: 54px; left: 30px; }
+    .q4 { bottom: 54px; right: 30px; text-align: right; }
+    .quad strong { display:block; color: var(--ink); font-size: 1rem; }
+
+    .start-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 18px;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 8px 16px rgba(125,79,42,.22);
+      transition: transform .12s ease, opacity .12s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    button.secondary {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent-2);
+      box-shadow: none;
+    }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    .hidden { display: none !important; }
+
+    .progress-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      background: rgba(244,241,234,.84);
+      padding: 10px 0;
+      margin: 0 0 14px;
+    }
+    .progress-line {
+      height: 10px;
+      background: rgba(216,205,188,.9);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-line span {
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      border-radius: 999px;
+      transition: width .2s ease;
+    }
+    .progress-meta {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:.9rem;
+      color:var(--muted);
+      margin-top:6px;
+    }
+
+    .question {
+      padding: 20px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.42);
+      margin-bottom: 14px;
+    }
+    .question-title {
+      font-weight: 800;
+      font-size: 1.02rem;
+      margin-bottom: 12px;
+    }
+    .question small {
+      display:block;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+    label.answer {
+      display:flex;
+      min-height: 74px;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding: 10px 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: .85rem;
+      cursor:pointer;
+      transition: all .12s ease;
+      user-select:none;
+    }
+    label.answer:hover { border-color: var(--accent-2); color: var(--ink); }
+    label.answer input { display:none; }
+    label.answer:has(input:checked) {
+      background: rgba(125,79,42,.1);
+      border-color: var(--accent);
+      color: var(--ink);
+      font-weight: 800;
+      box-shadow: inset 0 0 0 1px rgba(125,79,42,.22);
+    }
+
+    .result-header {
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .compass-result {
+      min-height: 520px;
+      background:
+        linear-gradient(to right, rgba(176,58,46,.16), transparent 48%, rgba(46,110,176,.16)),
+        linear-gradient(to bottom, rgba(111,58,168,.17), transparent 48%, rgba(31,138,112,.17));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      position: relative;
+      overflow: hidden;
+    }
+    .dot {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      margin-left: -12px;
+      margin-top: -12px;
+      border-radius: 50%;
+      background: var(--ink);
+      border: 4px solid var(--card);
+      box-shadow: 0 0 0 4px rgba(36,32,27,.15), 0 12px 22px rgba(36,32,27,.24);
+      left: 50%;
+      top: 50%;
+    }
+
+    .score-big {
+      font-size: clamp(2rem, 3vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+      margin: 6px 0 12px;
+    }
+
+    .bar-row { margin: 14px 0; }
+    .bar-label {
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-size:.9rem;
+      color: var(--muted);
+      margin-bottom:6px;
+    }
+    .bar-track {
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(176,58,46,.5), rgba(216,205,188,.7) 50%, rgba(46,110,176,.5));
+      position: relative;
+      border: 1px solid rgba(216,205,188,.9);
+    }
+    .bar-track.alt {
+      background: linear-gradient(90deg, rgba(31,138,112,.5), rgba(216,205,188,.7) 50%, rgba(111,58,168,.45));
+    }
+    .bar-track.culture {
+      background: linear-gradient(90deg, rgba(31,138,112,.45), rgba(216,205,188,.7) 50%, rgba(125,79,42,.45));
+    }
+    .bar-track.collective {
+      background: linear-gradient(90deg, rgba(46,110,176,.45), rgba(216,205,188,.7) 50%, rgba(176,58,46,.45));
+    }
+    .bar-track.nation {
+      background: linear-gradient(90deg, rgba(46,110,176,.45), rgba(216,205,188,.7) 50%, rgba(125,79,42,.45));
+    }
+    .bar-marker {
+      position:absolute;
+      top:-5px;
+      width:10px;
+      height:22px;
+      border-radius:999px;
+      background: var(--ink);
+      border:2px solid var(--card);
+      box-shadow: 0 3px 8px rgba(36,32,27,.28);
+      left:50%;
+    }
+
+    .tag-list { margin-top: 12px; }
+    .tag {
+      display:inline-flex;
+      padding:7px 11px;
+      border-radius:999px;
+      margin:4px 4px 0 0;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.45);
+      font-size:.85rem;
+      color:var(--muted);
+    }
+
+    .warning {
+      background: rgba(166,106,0,.08);
+      border:1px solid rgba(166,106,0,.22);
+      border-radius: 16px;
+      padding: 14px;
+      color: #6e4700;
+    }
+
+    .print-note { color: var(--muted); font-size:.9rem; }
+
+    @media (max-width: 900px) {
+      .grid.two, .grid.three, .result-header { grid-template-columns: 1fr; }
+      .answers { grid-template-columns: 1fr; }
+      label.answer { min-height: 48px; justify-content:flex-start; text-align:left; }
+      .hero { padding: 24px; }
+      .quad { width: 40%; font-size:.78rem; }
+    }
+
+    @media print {
+      body { background: white; }
+      .progress-wrap, .start-row, button, #quizSection { display:none !important; }
+      .card, .hero { box-shadow:none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell hero">
+      <span class="pill">Modelo avanzado</span>
+      <span class="pill">70 preguntas</span>
+      <span class="pill">7 dimensiones</span>
+      <h1>Cuestionario de Compás Político</h1>
+      <p class="lead">Este ejercicio evalúa tendencias de pensamiento político a partir de tensiones entre economía, autoridad, libertad, individuo, colectivo, tradición, nación e instituciones. No mide partidos; mide prioridades ideológicas.</p>
+      <div class="start-row">
+        <button onclick="startQuiz()">Comenzar cuestionario</button>
+        <button class="secondary" onclick="document.getElementById('baseConceptual').scrollIntoView({behavior:'smooth'})">Ver bases del modelo</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="baseConceptual" class="section grid two">
+      <div class="card">
+        <h2>Base del compás</h2>
+        <p>El eje horizontal mide economía: a la izquierda se ubican posiciones que priorizan redistribución, propiedad social, derechos laborales y límites al capital; a la derecha, propiedad privada, mercado, mérito, competencia y menor intervención estatal.</p>
+        <p>El eje vertical mide autoridad: arriba se ubican posiciones que priorizan orden, disciplina, vigilancia, castigo, liderazgo fuerte o imposición moral; abajo, libertades civiles, autonomía personal, pluralismo, privacidad y límites al poder.</p>
+        <div class="tag-list">
+          <span class="tag">Capitalismo: principalmente derecha económica</span>
+          <span class="tag">Comunismo: principalmente izquierda económica</span>
+          <span class="tag">Dictadura: autoritarismo alto</span>
+          <span class="tag">Tiranía: autoritarismo extremo y arbitrario</span>
+        </div>
+      </div>
+      <div class="model-map">
+        <div class="axis-x"></div><div class="axis-y"></div>
+        <span class="axis-label left-label">Izquierda</span>
+        <span class="axis-label right-label">Derecha</span>
+        <span class="axis-label auth-label">Autoridad</span>
+        <span class="axis-label lib-label">Libertad</span>
+        <div class="quad q1"><strong>Izquierda autoritaria</strong>Estado fuerte, igualdad impuesta, planificación, partido o poder central.</div>
+        <div class="quad q2"><strong>Derecha autoritaria</strong>Orden, jerarquía, nación, tradición, mercado o élites privadas.</div>
+        <div class="quad q3"><strong>Izquierda libertaria</strong>Igualdad material, cooperativas, autogestión y libertades civiles.</div>
+        <div class="quad q4"><strong>Derecha libertaria</strong>Mercado, propiedad privada, autonomía individual y Estado limitado.</div>
+      </div>
+    </section>
+
+    <section class="section grid three">
+      <div class="card">
+        <h3>Individuo</h3>
+        <p>El individuo representa autonomía, conciencia, cuerpo, proyecto de vida, libertad de expresión, propiedad, responsabilidad personal y límites al poder de mayorías, Estado, empresas o comunidades.</p>
+      </div>
+      <div class="card">
+        <h3>Colectivo</h3>
+        <p>El colectivo representa bien común, comunidad, clase social, nación, familia, solidaridad, deberes sociales y condiciones materiales compartidas. No siempre equivale al Estado.</p>
+      </div>
+      <div class="card">
+        <h3>Lectura final</h3>
+        <p>El resultado combina el cuadrante principal con subescalas: cultura, nación/globalismo, individuo/colectivo, confianza institucional y cambio/tradición.</p>
+      </div>
+    </section>
+
+    <section id="quizSection" class="section card hidden">
+      <div class="progress-wrap">
+        <div class="progress-line"><span id="progressBar"></span></div>
+        <div class="progress-meta"><span id="progressText">0 de 70 respondidas</span><span>Contesta con honestidad, no con etiqueta ideológica.</span></div>
+      </div>
+      <h2>Cuestionario</h2>
+      <p class="print-note">Escala: totalmente en desacuerdo, en desacuerdo, neutral/depende, de acuerdo, totalmente de acuerdo.</p>
+      <form id="quizForm"></form>
+      <div class="start-row">
+        <button id="submitBtn" onclick="calculateResults(event)" disabled>Ver resultado</button>
+        <button class="secondary" onclick="resetQuiz(event)">Reiniciar</button>
+      </div>
+    </section>
+
+    <section id="resultSection" class="section hidden">
+      <div class="result-header">
+        <div class="card">
+          <h2>Resultado principal</h2>
+          <div class="score-big" id="profileTitle">—</div>
+          <p id="profileSummary"></p>
+          <div class="tag-list" id="profileTags"></div>
+          <div class="warning" id="tensionBox"></div>
+        </div>
+        <div class="compass-result">
+          <div class="axis-x"></div><div class="axis-y"></div>
+          <span class="axis-label left-label">Izquierda</span>
+          <span class="axis-label right-label">Derecha</span>
+          <span class="axis-label auth-label">Autoridad</span>
+          <span class="axis-label lib-label">Libertad</span>
+          <div class="dot" id="resultDot"></div>
+        </div>
+      </div>
+
+      <div class="section grid two">
+        <div class="card">
+          <h2>Subescalas</h2>
+          <div id="bars"></div>
+        </div>
+        <div class="card">
+          <h2>Lectura política</h2>
+          <p id="deepReading"></p>
+          <h3>Ideologías cercanas</h3>
+          <div class="tag-list" id="ideologyTags"></div>
+          <h3 style="margin-top:18px;">Notas de interpretación</h3>
+          <p class="print-note">Este resultado no afirma una identidad política definitiva. Indica afinidades según respuestas a dilemas de poder, economía, libertad, comunidad y tradición.</p>
+        </div>
+      </div>
+
+      <div class="start-row">
+        <button onclick="window.print()">Imprimir / guardar PDF</button>
+        <button class="secondary" onclick="resetQuiz(event)">Volver a contestar</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const responseValues = [-2, -1, 0, 1, 2];
+    const responseLabels = ["Totalmente en desacuerdo", "En desacuerdo", "Neutral / depende", "De acuerdo", "Totalmente de acuerdo"];
+
+    const questions = [
+      {t:"La riqueza extrema es un problema político aunque haya sido obtenida legalmente.", h:"Economía / desigualdad", w:{economic:-3, collective:2, institution:1}},
+      {t:"El Estado debe garantizar salud, educación y vivienda aunque eso implique impuestos altos.", h:"Economía / derechos sociales", w:{economic:-3, collective:2, institution:1}},
+      {t:"Las empresas estratégicas, como agua, energía o transporte, deberían estar bajo control público, social o cooperativo.", h:"Propiedad / sectores estratégicos", w:{economic:-3, collective:2, authority:1}},
+      {t:"La desigualdad es aceptable si surge del mérito, la innovación o el riesgo empresarial.", h:"Mercado / mérito", w:{economic:3, collective:-1, culture:1}},
+      {t:"Los sindicatos son necesarios para equilibrar el poder entre trabajadores y empresas.", h:"Trabajo / poder económico", w:{economic:-3, collective:2, institution:1}},
+      {t:"La propiedad privada debe tener límites cuando afecta el bienestar colectivo.", h:"Propiedad / bien común", w:{economic:-3, collective:2, authority:1}},
+      {t:"La competencia de mercado suele resolver mejor los problemas que la intervención estatal.", h:"Mercado / Estado", w:{economic:3, authority:-1, collective:-1}},
+      {t:"Una persona que trabaja tiempo completo debería poder vivir dignamente sin depender de caridad.", h:"Trabajo / dignidad", w:{economic:-2, collective:2}},
+      {t:"Las herencias grandes perpetúan privilegios injustos.", h:"Herencia / privilegio", w:{economic:-2, collective:2, culture:-1}},
+      {t:"Nacionalizar empresas puede ser legítimo si el interés público lo exige.", h:"Nacionalización", w:{economic:-3, authority:1, collective:2}},
+      {t:"Las regulaciones laborales excesivas frenan la creación de empleo.", h:"Regulación laboral", w:{economic:2, collective:-1}},
+      {t:"El Estado no debería rescatar empresas privadas con dinero público.", h:"Capitalismo / responsabilidad", w:{economic:-1, institution:1, collective:1}},
+      {t:"Un país necesita un líder fuerte que pueda tomar decisiones sin demasiados obstáculos institucionales.", h:"Liderazgo / instituciones", w:{authority:3, institution:-3}},
+      {t:"La policía debería tener más margen de acción aunque eso aumente el riesgo de abusos.", h:"Seguridad / abuso de poder", w:{authority:3, liberty:-3, culture:1}},
+      {t:"La libertad de expresión debe proteger incluso ideas ofensivas o impopulares.", h:"Libertades civiles", w:{authority:-3, liberty:3, culture:-1}},
+      {t:"En tiempos de crisis, el gobierno puede suspender temporalmente ciertos derechos.", h:"Excepción / crisis", w:{authority:3, liberty:-3, institution:-1}},
+      {t:"La vigilancia digital masiva es aceptable si reduce crimen o terrorismo.", h:"Tecnología / seguridad", w:{authority:3, liberty:-3}},
+      {t:"Las fuerzas armadas deben tener un papel importante en seguridad pública.", h:"Militarización", w:{authority:3, culture:1}},
+      {t:"Una sociedad ordenada es más importante que una sociedad completamente libre.", h:"Orden / libertad", w:{authority:3, liberty:-2, culture:1}},
+      {t:"La oposición política debe poder criticar al gobierno incluso en situaciones de emergencia.", h:"Pluralismo", w:{authority:-3, liberty:3, institution:2}},
+      {t:"Algunas ideas deberían prohibirse porque dañan la cohesión social.", h:"Censura / cohesión", w:{authority:3, liberty:-3, collective:1}},
+      {t:"La desobediencia civil puede ser legítima cuando las instituciones fallan.", h:"Protesta / legitimidad", w:{authority:-2, liberty:2, institution:-1}},
+      {t:"Nadie debería ser obligado a sacrificar su proyecto de vida por la comunidad.", h:"Individuo / comunidad", w:{collective:-3, liberty:2, authority:-1}},
+      {t:"La libertad individual no significa mucho si una persona vive en pobreza o dependencia económica.", h:"Libertad material", w:{economic:-3, collective:2, liberty:1}},
+      {t:"El bien común debe estar por encima del interés individual.", h:"Bien común", w:{collective:3, authority:1}},
+      {t:"Cada persona es principalmente responsable de su éxito o fracaso.", h:"Responsabilidad personal", w:{economic:2, collective:-3, culture:1}},
+      {t:"La sociedad tiene una deuda con quienes nacen en condiciones desfavorables.", h:"Desigualdad de origen", w:{economic:-2, collective:3, culture:-1}},
+      {t:"La comunidad puede exigir deberes fuertes a sus miembros.", h:"Deber social", w:{collective:3, authority:2, culture:1}},
+      {t:"La autonomía personal debe respetarse incluso cuando la mayoría la desaprueba.", h:"Autonomía / mayoría", w:{collective:-2, liberty:3, authority:-2, culture:-2}},
+      {t:"El mérito individual suele estar sobrevalorado porque depende mucho del contexto social.", h:"Mérito / estructura", w:{economic:-2, collective:2, culture:-1}},
+      {t:"La familia tradicional es la base más importante de una sociedad sana.", h:"Tradición / familia", w:{culture:3, authority:1, nation:1}},
+      {t:"El Estado no debe imponer una visión moral sobre la vida privada.", h:"Moral pública", w:{culture:-3, authority:-3, liberty:3}},
+      {t:"La educación debe transmitir valores nacionales y tradicionales.", h:"Educación / tradición", w:{culture:3, nation:2, authority:1}},
+      {t:"Las nuevas formas de familia deben tener el mismo reconocimiento que las tradicionales.", h:"Familia / igualdad cultural", w:{culture:-3, liberty:2, collective:1}},
+      {t:"Una sociedad que cambia demasiado rápido pierde identidad.", h:"Cambio / identidad", w:{culture:3, change:2, nation:1}},
+      {t:"Las religiones deben influir en la vida pública si representan los valores de la mayoría.", h:"Religión / mayoría", w:{culture:3, authority:2, liberty:-2, collective:1}},
+      {t:"Las personas deben poder vivir su identidad, sexualidad o creencias sin interferencia estatal.", h:"Vida privada", w:{culture:-3, liberty:3, authority:-2}},
+      {t:"La corrección política limita injustamente la libertad de expresión.", h:"Cultura / expresión", w:{culture:1, liberty:2, authority:-1}},
+      {t:"El gobierno debe priorizar siempre a los ciudadanos nacionales sobre los extranjeros.", h:"Nación / ciudadanía", w:{nation:3, collective:1, culture:1}},
+      {t:"La migración enriquece cultural y económicamente a un país.", h:"Migración", w:{nation:-3, culture:-1, economic:-1}},
+      {t:"Los tratados internacionales no deberían limitar la soberanía nacional.", h:"Soberanía", w:{nation:3, institution:-1}},
+      {t:"Problemas como clima, migración y comercio requieren soluciones globales aunque reduzcan autonomía nacional.", h:"Globalismo / cooperación", w:{nation:-3, collective:2, institution:1}},
+      {t:"La identidad nacional debe protegerse frente a influencias externas.", h:"Identidad nacional", w:{nation:3, culture:2, authority:1}},
+      {t:"Las fronteras deben ser más abiertas para personas que buscan mejores oportunidades.", h:"Fronteras", w:{nation:-3, liberty:1, culture:-1}},
+      {t:"Las instituciones judiciales deben poder frenar a un presidente popular.", h:"Contrapesos", w:{institution:3, authority:-2}},
+      {t:"Los expertos deberían tener más peso que la opinión pública en decisiones complejas.", h:"Tecnocracia", w:{institution:2, authority:1}},
+      {t:"Los medios de comunicación privados suelen defender intereses de élite.", h:"Medios / élites", w:{economic:-1, institution:-2, collective:1}},
+      {t:"La voluntad de la mayoría no debe violar derechos individuales.", h:"Mayoría / derechos", w:{liberty:3, authority:-2, institution:2, collective:-1}},
+      {t:"Los partidos políticos son necesarios aunque sean imperfectos.", h:"Democracia representativa", w:{institution:2, authority:-1}},
+      {t:"Cuando el pueblo elige un proyecto, las minorías deben aceptar sin bloquearlo.", h:"Mayoritarismo", w:{authority:2, institution:-1, collective:2}},
+      {t:"Las universidades, jueces y medios suelen estar desconectados de la gente común.", h:"Anti-élite", w:{institution:-2, collective:1}},
+      {t:"La democracia directa debería usarse más, incluso si produce decisiones inestables.", h:"Democracia directa", w:{institution:-1, authority:-1, liberty:1}},
+      {t:"El castigo severo disuade mejor el crimen que la rehabilitación.", h:"Crimen / castigo", w:{authority:3, culture:1}},
+      {t:"Las causas sociales del crimen importan tanto como la responsabilidad individual.", h:"Crimen / estructura", w:{economic:-2, collective:2, culture:-1}},
+      {t:"El Estado debe tolerar protestas disruptivas si expresan demandas legítimas.", h:"Protesta", w:{authority:-2, liberty:2, economic:-1}},
+      {t:"Bloquear calles o afectar negocios nunca debería permitirse como forma de protesta.", h:"Orden / protesta", w:{authority:2, economic:1, liberty:-1}},
+      {t:"Los derechos humanos deben aplicarse incluso a criminales peligrosos.", h:"Derechos humanos", w:{authority:-2, liberty:2, culture:-1}},
+      {t:"En zonas violentas, es aceptable militarizar la seguridad temporalmente.", h:"Violencia / militarización", w:{authority:3, liberty:-1}},
+      {t:"Las grandes plataformas tecnológicas deberían ser reguladas como servicios públicos.", h:"Tecnología / regulación", w:{economic:-2, authority:1, collective:2}},
+      {t:"La privacidad digital debe protegerse aunque dificulte investigaciones criminales.", h:"Privacidad", w:{authority:-3, liberty:3}},
+      {t:"Las redes sociales deberían censurar activamente discursos extremistas.", h:"Plataformas / censura", w:{authority:2, liberty:-2, culture:-1}},
+      {t:"El Estado no debe tener acceso amplio a datos personales sin orden judicial.", h:"Datos / Estado", w:{authority:-3, liberty:3, institution:2}},
+      {t:"La inteligencia artificial y automatización deben regularse para proteger empleo y derechos.", h:"IA / trabajo", w:{economic:-2, collective:2, authority:1}},
+      {t:"La innovación tecnológica no debe frenarse con regulación excesiva.", h:"Innovación / mercado", w:{economic:2, authority:-1, liberty:1}},
+      {t:"El crecimiento económico debe limitarse si destruye ecosistemas.", h:"Ambiente / crecimiento", w:{economic:-2, collective:2, change:-1}},
+      {t:"El mercado puede resolver la crisis ambiental mediante innovación.", h:"Ambiente / mercado", w:{economic:2, authority:-1}},
+      {t:"El Estado debe imponer restricciones fuertes a industrias contaminantes.", h:"Ambiente / regulación", w:{economic:-2, authority:2, collective:2}},
+      {t:"Las generaciones futuras tienen derechos que deben limitar decisiones actuales.", h:"Futuro / deber colectivo", w:{collective:2, authority:1, culture:-1}},
+      {t:"Las personas deberían poder consumir libremente aunque otros consideren que dañan el ambiente.", h:"Consumo / libertad", w:{economic:2, liberty:2, collective:-2}},
+      {t:"La propiedad privada de recursos naturales debe subordinarse al interés ecológico.", h:"Propiedad / ecología", w:{economic:-3, collective:2, authority:1}}
+    ];
+
+    function startQuiz(){
+      document.getElementById('quizSection').classList.remove('hidden');
+      document.getElementById('quizSection').scrollIntoView({behavior:'smooth'});
+      renderQuestions();
+    }
+
+    function renderQuestions(){
+      const form = document.getElementById('quizForm');
+      if(form.dataset.rendered) return;
+      form.innerHTML = questions.map((q, i) => `
+        <div class="question">
+          <div class="question-title">${i+1}. ${q.t}</div>
+          <small>${q.h}</small>
+          <div class="answers">
+            ${responseLabels.map((label, idx) => `
+              <label class="answer">
+                <input type="radio" name="q${i}" value="${responseValues[idx]}" onchange="updateProgress()" />
+                <span>${label}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+      form.dataset.rendered = 'true';
+      updateProgress();
+    }
+
+    function updateProgress(){
+      const answered = questions.filter((_, i) => document.querySelector(`input[name=q${i}]:checked`)).length;
+      const pct = answered / questions.length * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${answered} de ${questions.length} respondidas`;
+      document.getElementById('submitBtn').disabled = answered !== questions.length;
+    }
+
+    function normalize(raw, max){
+      if(max === 0) return 0;
+      return Math.max(-100, Math.min(100, Math.round((raw / max) * 100)));
+    }
+
+    function calculateResults(e){
+      e.preventDefault();
+      const axes = { economic:0, authority:0, liberty:0, culture:0, collective:0, nation:0, institution:0, change:0 };
+      const max = { economic:0, authority:0, liberty:0, culture:0, collective:0, nation:0, institution:0, change:0 };
+
+      questions.forEach((q, i) => {
+        const selected = document.querySelector(`input[name=q${i}]:checked`);
+        const value = Number(selected.value);
+        Object.entries(q.w).forEach(([axis, weight]) => {
+          axes[axis] += value * weight;
+          max[axis] += 2 * Math.abs(weight);
+        });
+      });
+
+      const score = {};
+      Object.keys(axes).forEach(axis => score[axis] = normalize(axes[axis], max[axis]));
+      score.authorityComposite = Math.round((score.authority - score.liberty) / 2);
+      score.authorityComposite = Math.max(-100, Math.min(100, score.authorityComposite));
+
+      showResults(score);
+    }
+
+    function intensity(value, labels){
+      const a = Math.abs(value);
+      let level = a >= 75 ? 'radical' : a >= 45 ? 'fuerte' : a >= 20 ? 'moderado' : 'centro';
+      if(level === 'centro') return labels.center;
+      return value < 0 ? `${labels.negativo} ${level}` : `${labels.positivo} ${level}`;
+    }
+
+    function quadrant(score){
+      const econ = score.economic;
+      const auth = score.authorityComposite;
+      if(Math.abs(econ) < 20 && Math.abs(auth) < 20) return 'Centro pragmático institucional';
+      if(econ < -20 && auth > 20) return 'Izquierda autoritaria';
+      if(econ > 20 && auth > 20) return 'Derecha autoritaria';
+      if(econ < -20 && auth < -20) return 'Izquierda libertaria';
+      if(econ > 20 && auth < -20) return 'Derecha libertaria';
+      if(econ < -20) return 'Izquierda democrática / social';
+      if(econ > 20) return 'Derecha liberal / conservadora';
+      if(auth > 20) return 'Autoritarismo centrista / tecnocrático';
+      return 'Libertarismo civil centrista';
+    }
+
+    function ideologyMatches(score){
+      const tags = [];
+      const econ = score.economic, auth = score.authorityComposite;
+      if(econ <= -70 && auth >= 45) tags.push('Comunismo de Estado / marxismo-leninismo');
+      if(econ <= -50 && auth > -20 && auth < 35) tags.push('Socialismo democrático');
+      if(econ <= -45 && auth <= -30) tags.push('Izquierda libertaria / cooperativismo');
+      if(econ < -20 && score.institution > 10 && auth < 20) tags.push('Socialdemocracia');
+      if(econ >= 50 && auth <= -30) tags.push('Libertarismo de mercado');
+      if(econ >= 30 && auth < 20 && score.culture < 10) tags.push('Liberalismo clásico');
+      if(econ >= 25 && auth >= 20 && score.culture >= 25) tags.push('Conservadurismo nacional');
+      if(econ >= 45 && auth >= 45) tags.push('Capitalismo autoritario / ordenista');
+      if(Math.abs(econ) < 25 && auth >= 35) tags.push('Tecnocracia autoritaria / orden institucional duro');
+      if(Math.abs(econ) < 25 && Math.abs(auth) < 25) tags.push('Centro pragmático');
+      if(score.nation >= 45 && auth >= 20) tags.push('Nacionalismo populista o conservador');
+      if(score.nation <= -45 && score.culture <= -20) tags.push('Cosmopolitismo progresista');
+      if(score.institution <= -45) tags.push('Anti-establishment / populismo crítico');
+      if(tags.length === 0) tags.push('Perfil mixto o transversal');
+      return [...new Set(tags)].slice(0, 6);
+    }
+
+    function makeSummary(score, q){
+      const econ = intensity(score.economic, {negativo:'izquierda económica', positivo:'derecha económica', center:'centro económico'});
+      const auth = intensity(score.authorityComposite, {negativo:'libertario', positivo:'autoritario', center:'equilibrio autoridad-libertad'});
+      const culture = intensity(score.culture, {negativo:'progresista cultural', positivo:'conservador cultural', center:'centro cultural'});
+      return `Tu resultado principal cae en ${q}. En economía tiendes hacia ${econ}; en el eje de poder te ubicas en ${auth}; y culturalmente apareces como ${culture}.`;
+    }
+
+    function deepReading(score){
+      let parts = [];
+      if(score.economic <= -45) parts.push('Tiendes a interpretar la economía como una relación de poder: desigualdad, propiedad, trabajo, derechos sociales y concentración de riqueza pesan mucho en tu visión política.');
+      else if(score.economic >= 45) parts.push('Tiendes a confiar en propiedad privada, mercado, competencia, mérito e iniciativa individual como motores principales de prosperidad.');
+      else parts.push('Tu posición económica parece mixta: aceptas elementos de mercado y también intervención pública o límites sociales cuando los consideras necesarios.');
+
+      if(score.authorityComposite >= 45) parts.push('Das mucha importancia al orden, seguridad, disciplina o dirección fuerte; tu riesgo ideológico sería justificar restricciones severas a libertades en nombre de estabilidad.');
+      else if(score.authorityComposite <= -45) parts.push('Desconfías de la concentración de poder y das mucha importancia a libertades civiles, pluralismo, privacidad y autonomía personal.');
+      else parts.push('Buscas cierto equilibrio entre autoridad legítima y derechos civiles; no pareces inclinarte de forma extrema hacia control o antiestatismo.');
+
+      if(score.collective >= 45) parts.push('Tu visión del individuo está fuertemente vinculada al contexto social: comunidad, clase, deberes colectivos o bien común tienen peso importante.');
+      else if(score.collective <= -45) parts.push('Tu visión prioriza al individuo como sujeto autónomo y responsable, con límites claros frente a presiones de comunidad, Estado o mayoría.');
+
+      if(score.nation >= 45) parts.push('También aparece una orientación nacionalista o soberanista: identidad nacional, fronteras y prioridad ciudadana son valores relevantes para ti.');
+      else if(score.nation <= -45) parts.push('También aparece una orientación cosmopolita: cooperación global, migración y apertura cultural tienen peso importante para ti.');
+
+      return parts.join(' ');
+    }
+
+    function detectTensions(score){
+      const t = [];
+      if(score.economic <= -45 && score.authorityComposite <= -35) t.push('Valoras igualdad económica, pero rechazas concentración estatal de poder: esto apunta más a izquierda libertaria, cooperativismo o socialismo democrático no autoritario.');
+      if(score.economic <= -45 && score.authorityComposite >= 35) t.push('Valoras igualdad económica y aceptas autoridad fuerte: esta combinación puede acercarse a socialismo estatista o comunismo de Estado si no hay límites democráticos.');
+      if(score.economic >= 45 && score.authorityComposite >= 35) t.push('Defiendes mercado o propiedad privada, pero aceptas autoridad fuerte: esto se acerca más a derecha ordenista o conservadora que a liberalismo clásico.');
+      if(score.economic >= 45 && score.authorityComposite <= -35) t.push('Defiendes mercado y libertades civiles: esto se acerca a liberalismo clásico, libertarismo o derecha libertaria.');
+      if(score.culture >= 45 && score.authorityComposite <= -25) t.push('Hay una tensión entre conservar valores tradicionales y limitar el poder del Estado para imponer moral pública.');
+      if(score.collective >= 45 && score.liberty >= 40) t.push('Combinas sensibilidad comunitaria con defensa de autonomía: esto indica colectivismo no necesariamente autoritario.');
+      if(t.length === 0) t.push('No se detecta una tensión ideológica fuerte; tu perfil parece relativamente coherente dentro de su cuadrante principal.');
+      return t.join(' ');
+    }
+
+    function barHtml(name, left, right, value, cls=''){
+      const pos = (value + 100) / 2;
+      return `
+        <div class="bar-row">
+          <div class="bar-label"><strong>${name}</strong><span>${value}</span></div>
+          <div class="bar-label"><span>${left}</span><span>${right}</span></div>
+          <div class="bar-track ${cls}"><span class="bar-marker" style="left:calc(${pos}% - 5px)"></span></div>
+        </div>
+      `;
+    }
+
+    function showResults(score){
+      const q = quadrant(score);
+      document.getElementById('resultSection').classList.remove('hidden');
+      document.getElementById('profileTitle').textContent = q;
+      document.getElementById('profileSummary').textContent = makeSummary(score, q);
+      document.getElementById('deepReading').textContent = deepReading(score);
+      document.getElementById('tensionBox').textContent = detectTensions(score);
+
+      document.getElementById('profileTags').innerHTML = [
+        intensity(score.economic, {negativo:'Izquierda', positivo:'Derecha', center:'Centro económico'}),
+        intensity(score.authorityComposite, {negativo:'Libertario', positivo:'Autoritario', center:'Equilibrado'}),
+        intensity(score.culture, {negativo:'Progresista', positivo:'Conservador', center:'Centro cultural'}),
+        intensity(score.collective, {negativo:'Individualista', positivo:'Comunitario', center:'Mixto individuo/colectivo'})
+      ].map(x => `<span class="tag">${x}</span>`).join('');
+
+      document.getElementById('ideologyTags').innerHTML = ideologyMatches(score).map(x => `<span class="tag">${x}</span>`).join('');
+
+      document.getElementById('bars').innerHTML = [
+        barHtml('Economía', 'Izquierda', 'Derecha', score.economic),
+        barHtml('Autoridad', 'Libertad', 'Autoridad', score.authorityComposite, 'alt'),
+        barHtml('Cultura', 'Progresista', 'Conservador', score.culture, 'culture'),
+        barHtml('Individuo / colectivo', 'Individualista', 'Comunitario', score.collective, 'collective'),
+        barHtml('Nación / mundo', 'Cosmopolita', 'Nacionalista', score.nation, 'nation'),
+        barHtml('Instituciones', 'Anti-establishment', 'Institucionalista', score.institution),
+        barHtml('Cambio / tradición', 'Reformista', 'Tradicionalista', score.change, 'culture')
+      ].join('');
+
+      const x = (score.economic + 100) / 2;
+      const y = (score.authorityComposite + 100) / 2;
+      document.getElementById('resultDot').style.left = x + '%';
+      document.getElementById('resultDot').style.top = y + '%';
+
+      document.getElementById('resultSection').scrollIntoView({behavior:'smooth'});
+    }
+
+    function resetQuiz(e){
+      e.preventDefault();
+      document.getElementById('quizForm').reset();
+      document.getElementById('resultSection').classList.add('hidden');
+      updateProgress();
+      document.getElementById('quizSection').scrollIntoView({behavior:'smooth'});
+    }
+  </script>
+</body>
+</html>
